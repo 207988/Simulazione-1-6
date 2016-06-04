@@ -1,8 +1,9 @@
 package it.polito.tdp.flight.model;
 
-public class AirportPlus {
-	double distance;
-	Airport airport;
+public class AirportPlus implements Comparable<AirportPlus> {
+	private double distance;
+	private Airport airport;
+	private int id;
 	
 	
 	
@@ -23,6 +24,7 @@ public class AirportPlus {
 		super();
 		this.distance = distance;
 		this.airport = airport;
+		this.id=airport.getAirportId();
 		
 	}
 
@@ -44,7 +46,7 @@ public class AirportPlus {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((airport == null) ? 0 : airport.hashCode());
+		result = prime * result + id;
 		return result;
 	}
 
@@ -59,14 +61,35 @@ public class AirportPlus {
 		if (getClass() != obj.getClass())
 			return false;
 		AirportPlus other = (AirportPlus) obj;
-		if (airport == null) {
-			if (other.airport != null)
-				return false;
-		} else if (!airport.equals(other.airport))
+		if (id != other.id)
 			return false;
 		return true;
 	}
 
+
+
+	@Override
+	public String toString() {
+		return airport+"->"+distance;
+	}
+
+
+
+	@Override
+	public int compareTo(AirportPlus arg0) {
+		
+		return (int)(this.distance-arg0.distance);
+	}
+	
+	
+
+
+
+	
+
+
+
+	
 
 
 	

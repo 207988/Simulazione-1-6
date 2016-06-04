@@ -128,6 +128,7 @@ public class FlightDAO {
 		
 		List<Airport> arps = dao.getAllAirports() ;
 		System.out.println(arps);
+		System.out.println(arps.size());
 	}
 	
 }

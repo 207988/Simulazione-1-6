@@ -1,6 +1,6 @@
 package it.polito.tdp.flight.model;
 
-public class Airline {
+public class Airline implements Comparable<Airline>{
 	
 	private int airlineId ;
 	private String name ;
@@ -91,6 +91,12 @@ public class Airline {
 	@Override
 	public String toString() {
 		return ""+name;
+	}
+
+	@Override
+	public int compareTo(Airline arg0) {
+		// TODO Auto-generated method stub
+		return this.name.compareTo(arg0.name);
 	}
 	
 	

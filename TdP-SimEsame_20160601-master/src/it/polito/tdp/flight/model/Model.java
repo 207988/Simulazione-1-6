@@ -1,6 +1,7 @@
 package it.polito.tdp.flight.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -54,7 +56,8 @@ public class Model {
 			airports.put(a.getAirportId(),a);
 		}
 		linee.addAll(dao.getAllAirlines());
-		
+		Collections.sort(linee);
+		System.out.println(airports.values().size());
 		
 			
 			
@@ -62,12 +65,12 @@ public class Model {
 	
 	public void creaGrafo(int id){
 		FlightDAO dao=new FlightDAO();
-		tratte.addAll(dao.getAllRoutes(id));
-		System.out.print(tratte);
+		tratte.addAll(dao.getAllRoutes(id));		
 		//aggiungo vertici a grafo
 		for(Airport a:airports.values()){
 			graph.addVertex(a);
 		}
+		System.out.println(graph.vertexSet().size());
 		
 		
 		for(Route r:tratte){
@@ -81,6 +84,8 @@ public class Model {
 				graph.setEdgeWeight(dwe, weight);			
 			}
 		}
+		System.out.println(graph.vertexSet().size());
+		System.out.println(graph.edgeSet().size());
 	}
 	
 	private double calcolaDistanza(Airport a1,Airport a2){
@@ -102,23 +107,40 @@ public class Model {
 	
 	private void ricorsione(Airport source){
 		
-		
+		System.out.println("------"+source+"-----\n"+Graphs.neighborListOf(graph, source));
 		for(Airport dest:Graphs.neighborListOf(graph, source)){	
-			if(!airRaggiuntiRicorsione.contains(dest)){			
-			
-				DefaultWeightedEdge dwe=graph.getEdge(source,dest);
-				distance+=graph.getEdgeWeight(dwe);			
-				AirportPlus destp=new AirportPlus(distance,source);
-				airRaggiuntiRicorsione.add(destp);
-				this.ricorsione(dest);
-				distance-=graph.getEdgeWeight(dwe);	
+			if(graph.containsEdge(source, dest))
+				if(!airRaggiuntiRicorsione.contains(new AirportPlus(0,dest))){		
+					DefaultWeightedEdge dwe=graph.getEdge(source,dest);
+					distance+=graph.getEdgeWeight(dwe);			
+					AirportPlus destp=new AirportPlus(distance,dest);
+					airRaggiuntiRicorsione.add(destp);
+					this.ricorsione(dest);
+					distance-=graph.getEdgeWeight(dwe);	
+				}				
 			}
-			else
-				System.out.println("NULL");
 			
-		}
-		
+			
 	}
+	
+	public List<AirportPlus>airportRaggiungibiliAlt(Airport source){
+		List<AirportPlus> temp= new ArrayList<AirportPlus>();
+		SimpleDirectedWeightedGraph<Airport,DefaultWeightedEdge> graphTemp=new SimpleDirectedWeightedGraph<Airport,DefaultWeightedEdge>(DefaultWeightedEdge.class) ;
+		Graphs.addGraph(graphTemp, graph) ;
+		for(Airport a:graph.vertexSet()){
+			if(graphTemp.containsVertex(a))
+				if(graphTemp.edgesOf(a).isEmpty())
+					graphTemp.removeVertex(a);			
+				
+		}
+		for(Airport dest:graphTemp.vertexSet()){
+			DijkstraShortestPath<Airport,DefaultWeightedEdge> dij=new DijkstraShortestPath<Airport,DefaultWeightedEdge>(graphTemp,source,dest);
+			temp.add(new AirportPlus(dij.getPathLength(),dest));
+		}
+		return temp;
+	}
+		
+	
 
 }
 

@@ -2,6 +2,7 @@ package it.polito.tdp.flight;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -41,6 +42,7 @@ public class FlightController {
 
     @FXML
     void doRaggiungibili(ActionEvent event) {
+    	txtResult.clear();
     	if(boxAirline.getValue()==null){
     		txtResult.clear();
     		txtResult.setText("Seleziona una compagnia");
@@ -64,7 +66,8 @@ public class FlightController {
     		return;
     	}
     	else{
-    		List<AirportPlus> temp= new ArrayList<AirportPlus>(model.airportRaggiungibili(boxAirport.getValue()));
+    		List<AirportPlus> temp= new ArrayList<AirportPlus>(model.airportRaggiungibiliAlt(boxAirport.getValue()));
+    		Collections.sort(temp);
     		for(AirportPlus a:temp)
     			txtResult.appendText(a+"\n");
     		
